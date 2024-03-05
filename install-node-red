@@ -1,0 +1,52 @@
+#!/bin/bash
+echo "██████╗.███████╗███╗...███╗.██████╗.........██████╗..██████╗..█████╗.██████╗.██████╗."
+echo "██╔══██╗██╔════╝████╗.████║██╔═══██╗........██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔══██╗"
+echo "██║..██║█████╗..██╔████╔██║██║...██║........██████╔╝██║...██║███████║██████╔╝██║..██║"
+echo "██║..██║██╔══╝..██║╚██╔╝██║██║...██║........██╔══██╗██║...██║██╔══██║██╔══██╗██║..██║"
+echo "██████╔╝███████╗██║.╚═╝.██║╚██████╔╝███████╗██████╔╝╚██████╔╝██║..██║██║..██║██████╔╝"
+echo "╚═════╝.╚══════╝╚═╝.....╚═╝.╚═════╝.╚══════╝╚═════╝..╚═════╝.╚═╝..╚═╝╚═╝..╚═╝╚═════╝."
+echo "....................................................................................."
+sleep 5s
+echo "Raspberry Pi wordt bijgewerkt..."
+sudo apt update
+sudo apt upgrade -y
+
+echo "Node.js en Node-RED worden geïnstalleerd..."
+bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+
+echo "Node-RED wordt ingesteld om bij het opstarten uit te voeren..."
+sudo systemctl enable nodered.service
+
+echo "Extra Node-RED nodes worden geïnstalleerd..."
+sudo npm install -g node-red-contrib-modbus
+sudo npm install -g node-red-dashboard
+
+# Toestaan dat Node-RED luistert op priviligeerde poorten (zoals 80, 443) zonder als root te draaien, nodig voor node-red-contrib-modbus
+echo "Node-RED krijgt toestemming om te luisteren op priviligeerde poorten, nodig voor node-red-contrib-modbus..."
+sudo setcap 'cap_net_bind_service=+ep' $(which node)
+echo "Er wordt straks de network tool geopend kijk in de handleiding hoe je het moet instellen"
+sleep 5s
+echo "Starten van nmtui..."
+sudo nmtui
+echo "██████╗..██████╗.███╗...██╗███████╗....██╗███╗...██╗███████╗████████╗.█████╗.██╗.....██╗.....██╗███╗...██╗.██████╗."
+echo "██╔══██╗██╔═══██╗████╗..██║██╔════╝....██║████╗..██║██╔════╝╚══██╔══╝██╔══██╗██║.....██║.....██║████╗..██║██╔════╝."
+echo "██║..██║██║...██║██╔██╗.██║█████╗......██║██╔██╗.██║███████╗...██║...███████║██║.....██║.....██║██╔██╗.██║██║..███╗"
+echo "██║..██║██║...██║██║╚██╗██║██╔══╝......██║██║╚██╗██║╚════██║...██║...██╔══██║██║.....██║.....██║██║╚██╗██║██║...██║"
+echo "██████╔╝╚██████╔╝██║.╚████║███████╗....██║██║.╚████║███████║...██║...██║..██║███████╗███████╗██║██║.╚████║╚██████╔╝"
+echo "╚═════╝..╚═════╝.╚═╝..╚═══╝╚══════╝....╚═╝╚═╝..╚═══╝╚══════╝...╚═╝...╚═╝..╚═╝╚══════╝╚══════╝╚═╝╚═╝..╚═══╝.╚═════╝."
+echo "..................................................................................................................."
+sleep 5s
+echo "rebooting in"
+sleep 1s
+echo "4"
+sleep 1s
+echo "3"
+sleep 1s
+echo "2"
+sleep 1
+echo "1"
+sleep 1
+echo "rebooting..."
+sleep 1
+sudo reboot
+

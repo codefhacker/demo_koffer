@@ -1,5 +1,4 @@
-Here you find the file named flows.json.
+Here you find the files for node-red
 
-Import this file into Node-red  by going to the menu and select import.
-
+imort the main.json for everything and servo_control for the servo
   

@@ -1,5 +1,198 @@
 [
     {
+        "id": "fdcf310429cf18c9",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "9e990a5b57387c45",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "4399cd313bd585be",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#1bbfff",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#0094ce",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "e65f81765ca5de0c",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "9e990a5b57387c45",
+        "order": 1,
+        "disp": true,
+        "width": 30,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a9bddfd7b68f3d92",
+        "type": "rpi-gpio out",
+        "z": "fdcf310429cf18c9",
+        "name": "",
+        "pin": "18",
+        "set": "",
+        "level": "0",
+        "freq": "",
+        "out": "pwm",
+        "bcm": true,
+        "x": 760,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "22c89ac2c2fc6326",
+        "type": "function",
+        "z": "fdcf310429cf18c9",
+        "name": "servo_open",
+        "func": "if (msg.payload === true) { // kijk of er is getriggerd\n    let servo_stand = 4.8; // waarde voor dicht\n\n    const sendValue = () => {\n        if (servo_stand <= 13.8) { // waarde voor open\n            node.send({ payload: servo_stand });\n            servo_stand += 0.2;\n            setTimeout(sendValue, 50);\n        }\n    };\n    sendValue();\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 400,
+        "wires": [
+            [
+                "a9bddfd7b68f3d92"
+            ]
+        ]
+    },
+    {
+        "id": "eb775f287ddbbdf9",
+        "type": "ui_switch",
+        "z": "fdcf310429cf18c9",
+        "name": "",
+        "label": "switch",
+        "tooltip": "",
+        "group": "e65f81765ca5de0c",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "payload",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 90,
+        "y": 520,
+        "wires": [
+            [
+                "22c89ac2c2fc6326"
+            ]
+        ]
+    },
+    {
         "id": "db1a05b7f877d9e2",
         "type": "function",
         "z": "fdcf310429cf18c9",
@@ -13,6 +206,92 @@
         "libs": [],
         "x": 310,
         "y": 560,
+        "wires": [
+            [
+                "a9bddfd7b68f3d92"
+            ]
+        ]
+    },
+    {
+        "id": "4407121ce0b57fad",
+        "type": "ui_switch",
+        "z": "fdcf310429cf18c9",
+        "name": "",
+        "label": "servo_dicht",
+        "tooltip": "",
+        "group": "e65f81765ca5de0c",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 150,
+        "y": 640,
+        "wires": [
+            [
+                "db1a05b7f877d9e2"
+            ]
+        ]
+    },
+    {
+        "id": "12c31988969d696a",
+        "type": "inject",
+        "z": "fdcf310429cf18c9",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "13.8",
+        "payloadType": "num",
+        "x": 370,
+        "y": 120,
+        "wires": [
+            [
+                "a9bddfd7b68f3d92"
+            ]
+        ]
+    },
+    {
+        "id": "7070b1dae9414df6",
+        "type": "ui_slider",
+        "z": "fdcf310429cf18c9",
+        "name": "",
+        "label": "slider",
+        "tooltip": "",
+        "group": "e65f81765ca5de0c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "25",
+        "step": "0.2",
+        "className": "",
+        "x": 590,
+        "y": 640,
         "wires": [
             [
                 "a9bddfd7b68f3d92"

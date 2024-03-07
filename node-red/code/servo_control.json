@@ -1,0 +1,22 @@
+[
+    {
+        "id": "db1a05b7f877d9e2",
+        "type": "function",
+        "z": "fdcf310429cf18c9",
+        "name": "servo_dicht",
+        "func": "if (msg.payload === true) { // kijk of er is getriggerd\n    let servo_stand = 13.8; // waarde voor dicht\n\n    const sendValue = () => {\n        if (servo_stand >= 4.8) { // waarde voor open\n            node.send({ payload: servo_stand });\n            servo_stand -= 0.2;\n            setTimeout(sendValue, 50);\n        }\n    };\n    sendValue();\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 560,
+        "wires": [
+            [
+                "a9bddfd7b68f3d92"
+            ]
+        ]
+    }
+]

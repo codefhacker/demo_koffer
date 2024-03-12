@@ -9,34 +9,71 @@ echo "..........................................................................
 sleep 5s
 echo "Raspberry Pi wordt bijgewerkt..."
 sudo apt update
+echo "updates binnen gehaald"
+sleep 1
 sudo apt upgrade -y
+echo "alles is up to date"
+sleep 1
 
 echo "Node.js en Node-RED worden geïnstalleerd..."
 bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
-
+echo "Node.js en Node-RED geïnstalleerd."
+sleep 1
 echo "Node-RED wordt ingesteld om bij het opstarten uit te voeren..."
 sudo systemctl enable nodered.service
-
+echo "Node-RED ingesteld om bij het opstarten van de Pi automatisch op te starten"
+sleep 1
 echo "Extra Node-RED nodes worden geïnstalleerd..."
 sudo npm install -g node-red-contrib-modbus
+echo "Node-RED Modbus node geïnstalleerd."
+sleep 1
 sudo npm install -g node-red-dashboard
-
-# Toestaan dat Node-RED luistert op priviligeerde poorten (zoals 80, 443) zonder als root te draaien, nodig voor node-red-contrib-modbus
-echo "Node-RED krijgt toestemming om te luisteren op priviligeerde poorten, nodig voor node-red-contrib-modbus..."
+echo "Node-RED Dashboard node geïnstalleerd."
+sleep 1
+sudo npm install -g node-red-contrib-ui-media
+echo "Alle Node-RED nodes zijn geïnstalleerd."
+sleep 1
+echo "Node-RED krijgt toestemming voor poort 502 voor Modbus"
 sudo setcap 'cap_net_bind_service=+ep' $(which node)
-echo "Er wordt straks de network tool geopend kijk in de handleiding hoe je het moet instellen"
-sleep 5s
-echo "Starten van nmtui..."
-sudo nmtui
+echo "Modbus poort staan nu open"
+sleep 1
+
+echo "aanmaken python omgeving voor Neopixels....."
+cd
+mkdir lbk_code
+cd lbk_code
+python -m venv --system-site-packages env
+source env/bin/activate
+echo "installeren Neopixels drivers ....."
+sleep 1
+pip3 install rpi_ws281x adafruit-circuitpython-neopixel
+python3 -m pip install --force-reinstall adafruit-blinka
+deactivate
+echo "Neopixel driver volledig geslaagd."
+sleep 1
+
+echo "Verplaatsen bestanden naar lbk_code folder..."
+current_user=$(whoami)
+cp "/home/$current_user/demo_koffer/node-red/code/led_control.py" "/home/$current_user/lbk_code/"
+echo "Bestanden verplaats "
+sleep 1
+
+
+echo "Audio uitzetten voo Neopixels...."
+sudo sed -i 's/^dtparam=audio=on$/dtparam=audio=off/' /boot/config.txt
+echo "Configuratie audio aangepast in /boot/config.txt."
+
 echo "██████╗..██████╗.███╗...██╗███████╗....██╗███╗...██╗███████╗████████╗.█████╗.██╗.....██╗.....██╗███╗...██╗.██████╗."
 echo "██╔══██╗██╔═══██╗████╗..██║██╔════╝....██║████╗..██║██╔════╝╚══██╔══╝██╔══██╗██║.....██║.....██║████╗..██║██╔════╝."
-echo "██║..██║██║...██║██╔██╗.██║█████╗......██║██╔██╗.██║███████╗...██║...███████║██║.....██║.....██║██╔██╗.██║██║..███╗"
-echo "██║..██║██║...██║██║╚██╗██║██╔══╝......██║██║╚██╗██║╚════██║...██║...██╔══██║██║.....██║.....██║██║╚██╗██║██║...██║"
+echo "██║..██║██║...██║██╔██╗.██║█████╗......██║██╔██╗.██║███████╗...██║...███████║██║.....██║.....██║██╔██╗.██║██╔███╗."
+echo "██║..██║██║...██║██║╚██╗██║██╔══╝......██║██║╚██╗██║╚════██║...██║...██╔══██║██║.....██║.....██║██║╚██╗██║██║..██║"
 echo "██████╔╝╚██████╔╝██║.╚████║███████╗....██║██║.╚████║███████║...██║...██║..██║███████╗███████╗██║██║.╚████║╚██████╔╝"
 echo "╚═════╝..╚═════╝.╚═╝..╚═══╝╚══════╝....╚═╝╚═╝..╚═══╝╚══════╝...╚═╝...╚═╝..╚═╝╚══════╝╚══════╝╚═╝╚═╝..╚═══╝.╚═════╝."
 echo "..................................................................................................................."
 sleep 5s
-echo "rebooting in"
+echo "rebooten druk op Ctrl + c om het te stoppen wil je niet rebooten"
+sleep 1s
+echo "5"
 sleep 1s
 echo "4"
 sleep 1s
@@ -49,4 +86,3 @@ sleep 1
 echo "rebooting..."
 sleep 1
 sudo reboot
-

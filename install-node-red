@@ -6,13 +6,14 @@ echo "██║..██║██╔══╝..██║╚██╔╝██║�
 echo "██████╔╝███████╗██║.╚═╝.██║╚██████╔╝███████╗██████╔╝╚██████╔╝██║..██║██║..██║██████╔╝"
 echo "╚═════╝.╚══════╝╚═╝.....╚═╝.╚═════╝.╚══════╝╚═════╝..╚═════╝.╚═╝..╚═╝╚═╝..╚═╝╚═════╝."
 echo "....................................................................................."
+echo "Installatie script gemaakt door Fabian Boshoven"
 sleep 5s
 echo "Raspberry Pi wordt bijgewerkt..."
 sudo apt update
 echo "updates binnen gehaald"
 sleep 1
 sudo apt upgrade -y
-echo "alles is up to date"
+echo "Alles is up to date"
 sleep 1
 
 echo "Node.js en Node-RED worden geïnstalleerd..."
@@ -35,7 +36,7 @@ echo "Alle Node-RED nodes zijn geïnstalleerd."
 sleep 1
 echo "Node-RED krijgt toestemming voor poort 502 voor Modbus"
 sudo setcap 'cap_net_bind_service=+ep' $(which node)
-echo "Modbus poort staan nu open"
+echo "Modbus poort 502 staan nu open"
 sleep 1
 
 echo "aanmaken python omgeving voor Neopixels....."
@@ -44,7 +45,7 @@ mkdir lbk_code
 cd lbk_code
 python -m venv --system-site-packages env
 source env/bin/activate
-echo "installeren Neopixels drivers ....."
+echo "Installeren Neopixels drivers ....."
 sleep 1
 pip3 install rpi_ws281x adafruit-circuitpython-neopixel
 python3 -m pip install --force-reinstall adafruit-blinka
@@ -55,11 +56,11 @@ sleep 1
 echo "Verplaatsen bestanden naar lbk_code folder..."
 current_user=$(whoami)
 cp "/home/$current_user/demo_koffer/node-red/code/led_control.py" "/home/$current_user/lbk_code/"
-echo "Bestanden verplaats "
+echo "Bestanden verplaats naar lbk_code folder"
 sleep 1
 
 
-echo "Audio uitzetten voo Neopixels...."
+echo "Audio uitzetten voor Neopixels...."
 sudo sed -i 's/^dtparam=audio=on$/dtparam=audio=off/' /boot/config.txt
 echo "Configuratie audio aangepast in /boot/config.txt."
 
@@ -83,6 +84,6 @@ echo "2"
 sleep 1
 echo "1"
 sleep 1
-echo "rebooting..."
+echo "Rebooting"
 sleep 1
 sudo reboot

@@ -63,6 +63,18 @@ sleep 1
 echo "Audio uitzetten voor Neopixels...."
 sudo sed -i 's/^dtparam=audio=on$/dtparam=audio=off/' /boot/config.txt
 echo "Configuratie audio aangepast in /boot/config.txt."
+sleep 1
+
+echo "Installeren Mqtt server....."
+sudo apt install -y mosquitto mosquitto-clients
+echo "Mqtt server gienstallerd nog aanpassen...."
+sudo sh -c 'echo "listener 1883" >> /etc/mosquitto/mosquitto.conf'
+sudo sh -c 'echo "allow_anonymous true" >> /etc/mosquitto/mosquitto.conf'
+echo "starten op boot..."
+sleep 1
+sudo systemctl enable mosquitto.service
+echo "Mqtt instellen klaar"
+sleep 1
 
 echo "██████╗..██████╗.███╗...██╗███████╗....██╗███╗...██╗███████╗████████╗.█████╗.██╗.....██╗.....██╗███╗...██╗.██████╗."
 echo "██╔══██╗██╔═══██╗████╗..██║██╔════╝....██║████╗..██║██╔════╝╚══██╔══╝██╔══██╗██║.....██║.....██║████╗..██║██╔════╝."

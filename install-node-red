@@ -59,6 +59,13 @@ cp "/home/$current_user/demo_koffer/node-red/code/led_control.py" "/home/$curren
 echo "Bestanden verplaats naar lbk_code folder"
 sleep 1
 
+echo "Instellen node-red flow...."
+cd ./node-red
+rm flows.json
+cp "/home/$current_user/demo_koffer/node-red/code/flows.json" "/home/$current_user/./node-red/"
+echo "Bestanden verplaats"
+sleep 1
+
 
 echo "Audio uitzetten voor Neopixels...."
 sudo sed -i 's/^dtparam=audio=on$/dtparam=audio=off/' /boot/config.txt

@@ -11,6 +11,13 @@ class Config:
         self.potmeter_temperatuur = None
         self.potmeter_setpoint = None
         self.tijd_vertraging_servo = None
+        self.Kr_factor_verwarmen = None
+        self.Kr_factor_koelen = None
+        self.max_volt = None
+        self.min_volt = None
+        self.max_temp = None
+        self.min_temp = None
+        
 
     def load_from_file(self, filename='config.json'):
         try:
@@ -25,6 +32,15 @@ class Config:
                 self.potmeter_temperatuur = data['demo_koffer']['hardware']['analoge_pinnen']['potmeter_temperatuur']
                 self.potmeter_setpoint = data['demo_koffer']['hardware']['analoge_pinnen']['potmeter_setpoint']
                 self.tijd_vertraging_servo = data['demo_koffer']['overige_instellingen']['tijd_vertraging_servo']
+                self.Kr_factor_verwarmen = data['demo_koffer']['overige_instellingen']['Kr_factor_verwarmen']
+                self.Kr_factor_koelen = data['demo_koffer']['overige_instellingen']['Kr_factor_koelen']
+                self.max_volt = data['demo_koffer']['overige_instellingen']['maximale_voltage']
+                self.min_volt = data['demo_koffer']['overige_instellingen']['minimale_voltage']
+                self.max_temp = data['demo_koffer']['overige_instellingen']['maximale_temperatuur']
+                self.min_temp = data['demo_koffer']['overige_instellingen']['minimale_temperatuur']
+                
+                
+                
         except:
             print("bestand niet gevonden of verkeerd ingesteld")
             print("Bestand wordt hersteld met orginele waardes.......")
@@ -61,7 +77,17 @@ class Config:
                     }
                 },
                 'overige_instellingen': {
-                    'tijd_vertraging_servo': self.tijd_vertraging_servo
+                    'tijd_vertraging_servo': self.tijd_vertraging_servo,
+                    'Kr_factor_verwarmen': self.Kr_factor_verwarmen,
+                    'Kr_factor_koelen': self.Kr_factor_koelen,
+                    'maximale_voltage': self.max_volt,
+                    'minimale_voltage': self.min_volt,
+                    'maximale_temperatuur': self.max_temp,
+                    'minimale_temperatuur': self.min_temp
+                    
+                    
+                    
+                    
                 }
             }
         }
@@ -87,4 +113,5 @@ if __name__ == "__main__":
     print("\nGewijzigde config opgeslagen:")
     print(config.__dict__)
     print(config.servo_pin)
+
 

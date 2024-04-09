@@ -29,7 +29,7 @@
         "overige_instellingen": {
             "tijd_vertraging_servo": 10,
             "Kr_factor_verwarmen": 20,
-            "Kr_factor_koelen": 20,
+            "Kr_factor_koelen": 18,
             "maximale_voltage": 3.3,
             "minimale_voltage": 0,
             "maximale_temperatuur": 30,

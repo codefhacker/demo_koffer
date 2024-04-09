@@ -37,6 +37,7 @@ class Hardware:
         self.schakelaar_9 = None
         
         self.servo = None
+        self.servo_status = None
         
     def setup_adc_0(self,i2c_address):
         adc_0 = ADS.ADS1015(self.i2c, address=i2c_address)
@@ -53,7 +54,7 @@ class Hardware:
         self.adc_4_channel_3 = AnalogIn(adc_4, ADS.P3)
         
     def setup_neopixel(self,num_leds):
-        self.led_strip = neopixel.NeoPixel(board.D18, num_leds)
+        self.led_strip = neopixel.NeoPixel(board.D18, num_leds, brightness=0.1)
     
     def setup_leds(self,pin_hoog_urgent,pin_laag_urgent,pin_in_bedrijf):
         self.led_hoog_urgent= LED(pin_hoog_urgent)
@@ -86,6 +87,36 @@ class Hardware:
         minPW=(1.0-myCorrection)/1000
         
         self.servo = Servo(servo_pin,min_pulse_width=minPW,max_pulse_width=maxPW)
+    def move_servo(self, ticker):
+        min_input = 0
+        max_input = 100
+        min_output = -1
+        max_output = 1
+
+        geschaalde_waarde = (ticker - min_input) / (max_input - min_input) * (max_output - min_output) + min_output
+        
+        self.servo.value = geschaalde_waarde
+        sleep(0.5)
+        self.servo.detach()
+    
+    def led_strip_control(self, vraag, status_verwarmen):
+        if vraag:
+            if status_verwarmen == 1:
+                # Kleurverloop van rood naar donkerrood met toegevoegd groen
+                r = vraag + 155
+                self.led_strip.fill((r, 0, 0))
+            else:
+                b = vraag + 155
+                self.led_strip.fill((0, 0, b))
+        else:
+                # Als er geen vraag is, zet de LED-strip uit
+            self.led_strip.fill((0, 0, 0))  # Uitgeschakeld
+
+
+
+
+
+
         
         
         
@@ -97,45 +128,45 @@ if __name__ == "__main__":
     hardware.setup_adc_0(0x48)
     hardware.setup_neopixel(8)
     hardware.setup_leds(21,20,16)
-    hardware.led_strip.fill((0,255,0))
-    hardware.led_laag_urgent.on()
-    schakelaars = (26,19,13,6,5,0,11,9,10,22)
-    hardware.setup_schakelaars(schakelaars)
-    hardware.setup_servo(12)
-    hardware.servo.min()
-    print("min")
-    sleep(2)
-    hardware.servo.detach()
-    hardware.servo.mid()
-    print("mid")
-    sleep(2)
-    hardware.servo.detach()
-    hardware.servo.max()
-    print("max")
-    sleep(2)
-    hardware.servo.detach()
-    hardware.servo.mid()
-    sleep(2)
-    hardware.servo.min()
-    sleep(2)
-    hardware.servo.detach()
+    hardware.led_strip.fill((0,20,0))
+
+    hardware.led_strip_control(80,0)
+#     hardware.led_laag_urgent.on()
+#     schakelaars = (26,19,13,6,5,0,11,9,10,22)
+#     hardware.setup_schakelaars(schakelaars)
+#     hardware.setup_servo(12)
+#     hardware.servo.value = -1
+#     print("min")
+#     sleep(2)
+#     hardware.servo.detach()
+#     hardware.servo.value = 0
+#     print("mid")
+#     sleep(2)
+#     hardware.servo.detach()
+#     hardware.servo.value = 0.5
+#     print("max")
+#     sleep(2)
+#     hardware.servo.detach()
+#     hardware.servo.value = 1
+#     sleep(2)
+#     hardware.servo.detach()
     
     
    
     
     
-    while True:
-        try:
-            print(hardware.adc_0_channel_0.voltage)
-            print(hardware.schakelaar_0.is_pressed)
-            
-            sleep(0.1)
-        except KeyboardInterrupt:
-            hardware.led_strip.fill((0,0,0))
-            print("stopping")
-            exit()
-        except:
-            print("error")
+#     while True:
+#         try:
+#             print(hardware.adc_0_channel_0.voltage)
+#             print(hardware.schakelaar_0.is_pressed)
+#             
+#             sleep(0.1)
+#         except KeyboardInterrupt:
+#             hardware.led_strip.fill((0,0,0))
+#             print("stopping")
+#             exit()
+#         except:
+#             print("error")
             
     
     

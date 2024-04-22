@@ -4,7 +4,7 @@ from hardware import *
 from app_config import *
 from wiskunde import *
 from logica import *
-from lcd_controller import *
+#from lcd_controller import *
 from get_ip import *
 
 # MQTT instellingen
@@ -27,18 +27,17 @@ topic_fan = "fan"
 settings = Config()
 settings.load_from_file()
 hardware = Hardware()
-#hardware.setup_adc_0(settings.address_adc_0)
+hardware.setup_adc_0(settings.address_adc_0)
 hardware.setup_neopixel(settings.num_leds)
 hardware.setup_leds(settings.led_hoge_storing, settings.led_lage_storing, settings.led_in_bedrijf)
 hardware.setup_schakelaars(settings.schakelaars)
 logica = Logica()
 hardware.setup_servo(12)
 print(settings.schakelaars)
-setpoint_temperatuur = Wiskunde()
-huidige_temperatuur = Wiskunde()
-
-
-
+analoog_0 = Wiskunde()
+analoog_1 = Wiskunde()
+analoog_2 = Wiskunde()
+analoog_3 = Wiskunde()
 # verbind op de topics
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -51,7 +50,7 @@ def on_connect(client, userdata, flags, rc):
     for led_strip in topic_led_strip:
         client.subscribe(topic_prefix + "led_strip/" + led_strip)
     for leds in topic_leds:
-        client.subscribe(topic_prefix + "leds/" + led_strip)
+        client.subscribe(topic_prefix + "leds/" + leds)
     client.subscribe(topic_prefix + topic_servo)
     client.subscribe(topic_prefix + topic_fan)
     
@@ -64,13 +63,35 @@ def on_connect(client, userdata, flags, rc):
 
 # Callback function when a message is received from the subscribed topic
 def on_message(client, userdata, msg):
-    print("Received message on topic:", msg.topic)
-    print("Message:", msg.payload.decode())
+    #print("Received message on topic:", msg.topic)
+    #print("Message:", msg.payload.decode())
     # Here you can add your logic to process the received message
+    
+    topic = msg.topic
+    if topic.startswith("demo_koffer/modbus/leds") or topic.startswith("demo_koffer/modbus/led_strip"):
+        test = topic
+        test = test.split("/")
+        test = test[3]
+        print(test)
+        print(msg.payload.decode())
+    if topic == "demo_koffer/modbus/servo/klep":
+        print("servo/klep")
+        print(msg.payload.decode())
+    if topic == "demo_koffer/modbus/fan":
+        print("fan")
+        print(msg.payload.decode())
+        
+    
+    
+    
+        
+    
+    
+    
 
 # MQTT client initialization
 client = mqtt.Client("demo_koffer")
-client.username_pw_set(username, password)  # Set username and password
+#client.username_pw_set(username, password)  # Set username and password
 client.on_connect = on_connect  # Add the on_connect callback
 client.on_message = on_message  # Add the on_message callback
 client.connect(broker_address, broker_port)
@@ -80,16 +101,27 @@ client.loop_start()
 ticker = 0
 while True:
     ticker +=1
-    client.publish(topic_prefix + "led_strip/warmte_vraag", ticker)
-    client.publish(topic_prefix + "led_strip/koude_vraag", ticker)
-    client.publish(topic_prefix + "analoge_ingangen/analoog_0", ticker)
-    client.publish(topic_prefix + "analoge_ingangen/analoog_1", ticker)
-    client.publish(topic_prefix + "analoge_ingangen/analoog_2", ticker)
-    client.publish(topic_prefix + "analoge_ingangen/analoog_3", ticker)
-    print(ticker)
+    #print(settings.max_temp)
+   # print(hardware.adc_0_channel_0.voltage)
+    analoog_0.volt2_temp(settings.max_temp,settings.min_temp,settings.max_volt,settings.min_volt,hardware.adc_0_channel_0.voltage)
+    #print(analoog_0.temp)
+    analoog_1.volt2_temp(settings.max_temp,settings.min_temp,settings.max_volt,settings.min_volt,hardware.adc_0_channel_1.voltage)
+    #print(analoog_1.temp)
+    analoog_2.volt2_temp(settings.max_temp,settings.min_temp,settings.max_volt,settings.min_volt,hardware.adc_0_channel_2.voltage)
+    #print(analoog_2.temp)
+    analoog_3.volt2_temp(settings.max_temp,settings.min_temp,settings.max_volt,settings.min_volt,hardware.adc_0_channel_3.voltage)
+    #print(analoog_3.temp)
+    
+    client.publish(topic_prefix + "analoge_ingangen/analoog_0", analoog_0.temp)
+    client.publish(topic_prefix + "analoge_ingangen/analoog_1", analoog_1.temp)
+    client.publish(topic_prefix + "analoge_ingangen/analoog_2", analoog_2.temp)
+    client.publish(topic_prefix + "analoge_ingangen/analoog_3", analoog_3.temp)
+#     client.publish(topic_prefix + "analoge_ingangen/analoog_1", ticker)
+#     client.publish(topic_prefix + "analoge_ingangen/analoog_2", ticker)
+#     client.publish(topic_prefix + "analoge_ingangen/analoog_3", ticker)
+#     print(ticker)
     #print("Published message:", message)
-    time.sleep(1)
-    # You can add your logic here if needed
-    if ticker >=100:
-        ticker = 0
+    time.sleep(0.05)
+    
+
 

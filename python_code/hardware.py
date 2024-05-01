@@ -5,6 +5,8 @@ from adafruit_ads1x15.analog_in import AnalogIn
 import neopixel
 from time import sleep
 from gpiozero import Servo, Button , LED
+from gpiozero.pins.pigpio import PiGPIOFactory
+from gpiozero import AngularServo
 
 class Hardware:
     def __init__(self):
@@ -82,32 +84,35 @@ class Hardware:
         self.schakelaar_9 = Button(schakelaars[9], pull_up=False)
     
     def setup_servo(self,servo_pin):
-        myCorrection=0.45
-        maxPW=(2.0+myCorrection)/1000
-        minPW=(1.0-myCorrection)/1000
+        factory = PiGPIOFactory()
+        self.servo = AngularServo(12, min_angle=-90, max_angle=90, pin_factory=factory) #hardware servo control 
         
-        self.servo = Servo(servo_pin,min_pulse_width=minPW,max_pulse_width=maxPW)
+        
     def move_servo(self, ticker):
         min_input = 0
         max_input = 100
-        min_output = -1
-        max_output = 1
+        min_output = -90
+        max_output = 90
 
-        geschaalde_waarde = (ticker - min_input) / (max_input - min_input) * (max_output - min_output) + min_output
+        geschaalde_waarde = (ticker - min_input) / (max_input - min_input) * (max_output - min_output) + min_output #calculate ticker 
         
-        self.servo.value = geschaalde_waarde
-        sleep(0.5)
-        self.servo.detach()
+        self.servo.angle = geschaalde_waarde
+        print(geschaalde_waarde)
+        
     
     def led_strip_control(self, vraag, status_verwarmen):
         if vraag:
             if status_verwarmen == 1:
-                # Kleurverloop van rood naar donkerrood met toegevoegd groen
-                r = vraag + 155
-                self.led_strip.fill((r, 0, 0))
+                red = int(vraag) + 155
+                blue = 100 - int(vraag)
+                green = 100 - int(vraag)
+                self.led_strip.fill((red, green, blue))
             else:
-                b = vraag + 155
-                self.led_strip.fill((0, 0, b))
+                blue = int(vraag) + 155
+                red = 100 - int(vraag)
+                green = 100 - int(vraag)
+                self.led_strip.fill((red, green, blue))
+                
         else:
                 # Als er geen vraag is, zet de LED-strip uit
             self.led_strip.fill((0, 0, 0))  # Uitgeschakeld
@@ -117,60 +122,16 @@ class Hardware:
 
 
 
-        
-        
-        
-        
-         
-
 if __name__ == "__main__":
     hardware = Hardware()
-    hardware.setup_adc_0(0x48)
-    hardware.setup_neopixel(8)
-    hardware.setup_leds(21,20,16)
-    hardware.led_strip.fill((0,20,0))
-
-    hardware.led_strip_control(80,0)
-#     hardware.led_laag_urgent.on()
-#     schakelaars = (26,19,13,6,5,0,11,9,10,22)
-#     hardware.setup_schakelaars(schakelaars)
-#     hardware.setup_servo(12)
-#     hardware.servo.value = -1
-#     print("min")
-#     sleep(2)
-#     hardware.servo.detach()
-#     hardware.servo.value = 0
-#     print("mid")
-#     sleep(2)
-#     hardware.servo.detach()
-#     hardware.servo.value = 0.5
-#     print("max")
-#     sleep(2)
-#     hardware.servo.detach()
-#     hardware.servo.value = 1
-#     sleep(2)
-#     hardware.servo.detach()
+    hardware.setup_servo(12)
+    ticker = 0
     
-    
-   
-    
-    
-#     while True:
-#         try:
-#             print(hardware.adc_0_channel_0.voltage)
-#             print(hardware.schakelaar_0.is_pressed)
-#             
-#             sleep(0.1)
-#         except KeyboardInterrupt:
-#             hardware.led_strip.fill((0,0,0))
-#             print("stopping")
-#             exit()
-#         except:
-#             print("error")
-            
-    
-    
-    
-        
-        
+    while True:
+        ticker +=1
+        hardware.move_servo(ticker)
+        if ticker >= 100:
+            ticker = 0
+        print(ticker)
+        sleep(0.1)
     

@@ -55,6 +55,8 @@ class Config:
                 self.address_adc_0 = data['demo_koffer']['overige_instellingen']['i2c_address_adc_0']
                 self.address_adc_1 = data['demo_koffer']['overige_instellingen']['i2c_address_adc_1']
                 self.num_leds = data['demo_koffer']['overige_instellingen']['aantal_neopixel_leds']
+                self.mqtt_gebruikers_naam = data['demo_koffer']['overige_instellingen']['mqtt_gebruikers_naam']
+                self.mqtt_wachtwoord = data['demo_koffer']['overige_instellingen']['mqtt_wachtwoord']
                 self.schakelaar_0 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['0']
                 self.schakelaar_1 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['1']
                 self.schakelaar_2 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['2']
@@ -104,6 +106,9 @@ class Config:
             self.schakelaar_7 = None
             self.schakelaar_8 = None
             self.schakelaar_9 = None
+            self.mqtt_gebruikers_naam = None
+            self.mqtt_wachtwoord = None
+            
             self.save_to_file()
             print("Bestand hersteld")
 
@@ -146,7 +151,9 @@ class Config:
                     'minimale_temperatuur': self.min_temp,
                     'i2c_address_adc_0': self.address_adc_0,
                     'i2c_address_adc_1': self.address_adc_1,
-                    'aantal_neopixel_leds': self.num_leds
+                    'aantal_neopixel_leds': self.num_leds,
+                    'mqtt_gebruikers_naam' : self.mqtt_gebruikers_naam,
+                    'mqtt_wachtwoord' : self.mqtt_wachtwoord
                 }
             }
         }

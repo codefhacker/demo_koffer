@@ -37,8 +37,8 @@ hardware.setup_leds(settings.led_hoge_storing, settings.led_lage_storing, settin
 
 hardware.setup_schakelaars(settings.schakelaars)
 logica = Logica()
-hardware.setup_servo(12)
-print(settings.schakelaars)
+hardware.setup_servo(settings.servo_pin)
+# print(settings.schakelaars)
 setpoint_temperatuur = Wiskunde()
 huidige_temperatuur = Wiskunde()
 ticker = 0

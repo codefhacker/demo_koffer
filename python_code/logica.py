@@ -1,3 +1,18 @@
+"""
+logica functies voor de demo koffer 
+
+berekenstatus is voor het controleren van de status van de demo koffer
+
+Gemaakt door Fabian Boshoven
+
+Versie 0.9
+
+
+"""
+
+
+
+
 class Logica:
     def __init__(self):
         self.status_hoog_urgente_storing = None
@@ -87,4 +102,7 @@ if __name__ == "__main__":
     print("Status Laag Urgente Storing:", logica_instance.status_laag_urgente_storing)
     
     print(logica_instance.bereken_vermogen(22,19,15))
+
+
+
 

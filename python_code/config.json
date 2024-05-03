@@ -13,12 +13,12 @@
                     "1": 25,
                     "2": 5,
                     "3": 6,
-                    "4": 13,
-                    "5": 19,
-                    "6": 26,
-                    "7": 16,
-                    "8": 20,
-                    "9": 21 
+                    "4": 21,
+                    "5": 20,
+                    "6": null,
+                    "7": null,
+                    "8": null,
+                    "9": null
                 }
             },
             "analoge_pinnen": {
@@ -29,15 +29,21 @@
         "overige_instellingen": {
             "tijd_vertraging_servo": 10,
             "Kr_factor_verwarmen": 20,
-            "Kr_factor_koelen": 18,
+            "Kr_factor_koelen": 10,
             "maximale_voltage": 3.3,
             "minimale_voltage": 0,
             "maximale_temperatuur": 30,
             "minimale_temperatuur": 10,
             "i2c_address_adc_0": "0x48",
             "i2c_address_adc_1": "0x49",
-            "aantal_neopixel_leds": 8
+            "aantal_neopixel_leds": 8,
+            "mqtt_gebruikers_naam": "demo_koffer",
+            "mqtt_wachtwoord": "coneco2024",
+            "mqtt_internet_poort": 1883,
+            "mqtt_topic_normaal": "demo_koffer/",
+            "mqtt_topic_modbus": "demo_koffer/modbus/",
+            "max_procent_regelaar": 100,
+            "min_procent_regelaar": 0
         }
     }
 }
-

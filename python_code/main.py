@@ -6,12 +6,17 @@ from wiskunde import *
 from logica import *
 from lcd_controller import *
 from get_ip import *
+
+
+settings = Config()
+settings.load_from_file() # laad config vanuit json bestand
+
 # MQTT broker instellingen
 broker_address = get_ip_adress()
-broker_port = 1883
-topic_prefix = "demo_koffer/"
-username = "demo_koffer"
-password = "coneco2024"
+broker_port = settings.mqtt_internet_poort
+topic_prefix = settings.mqtt_topic_normaal
+username = settings.mqtt_gebruikers_naam
+password = settings.mqtt_wachtwoord
 
 # Functie om bericht te publiceren
 def publish_message(topic, message):
@@ -22,13 +27,12 @@ def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
 
 # MQTT client initialisatie
-client = mqtt.Client("demo_koffer")
+client = mqtt.Client(username)
 client.username_pw_set(username, password)  # instellen gebruikersnaam en wachtwoord
 client.on_connect = on_connect  # toevoegen van de on_connect callback
 client.connect(broker_address, broker_port)
 
-settings = Config()
-settings.load_from_file() # laad config vanuit json bestand
+
 
 hardware = Hardware()
 hardware.setup_adc_0(settings.address_adc_0)
@@ -38,9 +42,9 @@ hardware.setup_leds(settings.led_hoge_storing, settings.led_lage_storing, settin
 hardware.setup_schakelaars(settings.schakelaars)
 logica = Logica()
 hardware.setup_servo(settings.servo_pin)
-# print(settings.schakelaars)
 setpoint_temperatuur = Wiskunde()
 huidige_temperatuur = Wiskunde()
+
 ticker = 0
 ticker_servo = 0
 hardware.servo_status = 0
@@ -56,18 +60,8 @@ lcd_init() # i2c display aanmaken
 
 
 while True:
-    # Controleer of hardware.schakelaar_4.is_pressed waar is
-    if hardware.schakelaar_4.is_pressed:
-        mqtt_processing = True
-    else:
-        mqtt_processing = False
-        
-    if mqtt_processing:
-        # Logica berekenen via MQTT
-        client.loop()
-    else:
-        # Logica berekenen via hardware schakelaars
-        logica.bereken_status(hardware.schakelaar_0.is_pressed, hardware.schakelaar_1.is_pressed, hardware.schakelaar_2.is_pressed, hardware.schakelaar_3.is_pressed)
+    
+    logica.bereken_status(hardware.schakelaar_0.is_pressed, hardware.schakelaar_1.is_pressed, hardware.schakelaar_2.is_pressed, hardware.schakelaar_3.is_pressed)
     
     if ticker >= 10:
         # Logica-informatie publiceren
@@ -168,6 +162,4 @@ while True:
         lcd_status = "status : koelen"
         lcd_string(lcd_status,LCD_LINE_3)
 
-# Detach the servo outside the while loop
-hardware.servo.detach()
 

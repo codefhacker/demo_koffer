@@ -57,6 +57,9 @@ class Config:
         self.mqtt_internet_poort = None
         self.max_procent_regelaar = None
         self.min_procent_regelaar = None
+        self.licht_sterkte_neopixel = None
+        self.mqtt_topic_modbus = None
+        self.mqtt_topic_normaal = None
 
     def load_from_file(self, filename='config.json'):
         try:
@@ -100,13 +103,9 @@ class Config:
                 self.schakelaar_1 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['1']
                 self.schakelaar_2 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['2']
                 self.schakelaar_3 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['3']
-                self.schakelaar_4 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['4']
-                self.schakelaar_5 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['5']
-                self.schakelaar_6 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['6']
-                self.schakelaar_7 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['7']
-                self.schakelaar_8 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['8']
-                self.schakelaar_9 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['9']
-                self.schakelaars = tuple(data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars'][str(i)] for i in range(10))
+                self.licht_sterkte_neopixel = data['demo_koffer']['overige_instellingen']['licht_sterkte_neopixel']
+
+                self.schakelaars = tuple(data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars'][str(i)] for i in range(4))   # zet voor i in range 10 mochten er in de toekomst 10 schakelaars zijn.
 
                 
                 self.address_adc_0 = int(self.address_adc_0, 16) # omzetten van string naar nummer anders doet module voor adc het niet 
@@ -119,9 +118,9 @@ class Config:
             print("Bestand wordt hersteld met originele waarden.......")
             sleep(1)
             self.servo_pin = 12
-            self.led_hoge_storing = 17
+            self.led_hoge_storing = 22
             self.led_lage_storing = 27
-            self.led_in_bedrijf = 22
+            self.led_in_bedrijf = 17
             self.fan_pin = 23
             self.led_strip_pin = 18
             self.potmeter_temperatuur = None
@@ -140,12 +139,13 @@ class Config:
             self.schakelaar_1 = 25
             self.schakelaar_2 = 5
             self.schakelaar_3 = 6
-            self.schakelaar_4 = 21
-            self.schakelaar_5 = 20
-            self.schakelaar_6 = None
-            self.schakelaar_7 = None
-            self.schakelaar_8 = None
-            self.schakelaar_9 = None
+            self.licht_sterkte_neopixel = 1
+#             self.schakelaar_4 = 21
+#             self.schakelaar_5 = 20
+#             self.schakelaar_6 = None
+#             self.schakelaar_7 = None
+#             self.schakelaar_8 = None
+#             self.schakelaar_9 = None
             self.mqtt_gebruikers_naam = "demo_koffer"
             self.mqtt_wachtwoord = "coneco2024"
             self.mqtt_internet_poort = 1883
@@ -189,7 +189,7 @@ class Config:
                 },
                 'overige_instellingen': {
                     'tijd_vertraging_servo': self.tijd_vertraging_servo,
-                    'Kr_factor_verwarmen': self.Kr_factor_verwarmen,
+                    'Kr_factor_verwarmen': self.Kr_factor_verewarmen,
                     'Kr_factor_koelen': self.Kr_factor_koelen,
                     'maximale_voltage': self.max_volt,
                     'minimale_voltage': self.min_volt,
@@ -204,7 +204,8 @@ class Config:
                     'mqtt_topic_normaal' : self.mqtt_topic_normaal,
                     'mqtt_topic_modbus' : self.mqtt_topic_modbus,
                     'max_procent_regelaar' : self.max_procent_regelaar,
-                    'min_procent_regelaar' : self.min_procent_regelaar
+                    'min_procent_regelaar' : self.min_procent_regelaar,
+                    'licht_sterkte_neopixel' : self.licht_sterkte_neopixel
                 }
             }
         }
@@ -230,4 +231,5 @@ if __name__ == "__main__":
 #     print("\nGewijzigde config opgeslagen:")
 #     print(config.__dict__)
 #     print(config.servo_pin)
+
 

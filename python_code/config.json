@@ -3,22 +3,17 @@
         "hardware": {
             "digitale_pinnen": {
                 "servo_pin": 12,
-                "led_hoge_storing": 17,
+                "led_hoge_storing": 22,
                 "led_lage_storing": 27,
-                "led_in_bedrijf": 22,
+                "led_in_bedrijf": 17,
                 "fan_pin": 23,
                 "led_strip_pin": 18,
                 "schakelaars": {
                     "0": 24,
                     "1": 25,
                     "2": 5,
-                    "3": 6,
-                    "4": 21,
-                    "5": 20,
-                    "6": null,
-                    "7": null,
-                    "8": null,
-                    "9": null
+                    "3": 6
+                    
                 }
             },
             "analoge_pinnen": {
@@ -43,7 +38,8 @@
             "mqtt_topic_normaal": "demo_koffer/",
             "mqtt_topic_modbus": "demo_koffer/modbus/",
             "max_procent_regelaar": 100,
-            "min_procent_regelaar": 0
+            "min_procent_regelaar": 0,
+            "licht_sterkte_neopixel" : 1 
         }
     }
 }

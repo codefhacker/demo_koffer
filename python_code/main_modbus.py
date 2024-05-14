@@ -4,15 +4,19 @@ from hardware import *
 from app_config import *
 from wiskunde import *
 from logica import *
-#from lcd_controller import *
+from lcd_controller import *
 from get_ip import *
+
+
+settings = Config()
+settings.load_from_file()
 
 # MQTT instellingen
 broker_address = get_ip_adress()
-broker_port = 1883
-topic_prefix = "demo_koffer/modbus/"
-username = "demo_koffer"
-password = "coneco2024"
+broker_port = settings.mqtt_internet_poort
+topic_prefix = settings.mqtt_topic_modbus
+username = settings.mqtt_gebruikers_naam
+password = settings.mqtt_wachtwoord
 
 #topic voor mqtt
 topic_schakelaars = ["schakelaar_0", "schakelaar_1", "schakelaar_2", "schakelaar_3", "schakelaar_4", "schakelaar_5"]
@@ -24,15 +28,14 @@ topic_fan = "fan"
 
 #laad isntellingen
 
-settings = Config()
-settings.load_from_file()
+
 hardware = Hardware()
 hardware.setup_adc_0(settings.address_adc_0)
-hardware.setup_neopixel(settings.num_leds)
+hardware.setup_neopixel(settings.num_leds,settings.licht_sterkte_neopixel)
 hardware.setup_leds(settings.led_hoge_storing, settings.led_lage_storing, settings.led_in_bedrijf)
 hardware.setup_schakelaars(settings.schakelaars)
 logica = Logica()
-hardware.setup_servo(12)
+hardware.setup_servo(settings.servo_pin)
 print(settings.schakelaars)
 analoog_0 = Wiskunde()
 analoog_1 = Wiskunde()
@@ -91,37 +94,74 @@ def on_message(client, userdata, msg):
 
 # MQTT client initialization
 client = mqtt.Client("demo_koffer")
-#client.username_pw_set(username, password)  # Set username and password
+client.username_pw_set(username, password)  # Set username and password
 client.on_connect = on_connect  # Add the on_connect callback
 client.on_message = on_message  # Add the on_message callback
 client.connect(broker_address, broker_port)
 
 # Start the network loop to process incoming and outgoing messages
 client.loop_start()
-ticker = 0
+ticker = 0 
+# Initialiseer oude waarden voor de variabelen
+old_analoog_0 = None
+old_analoog_1 = None
+old_analoog_2 = None
+old_analoog_3 = None
+
+old_schakelaar_0_state = None
+old_schakelaar_1_state = None
+old_schakelaar_2_state = None
+old_schakelaar_3_state = None
+# Voeg hier andere variabelen toe die je wilt bewaken
+
 while True:
-    ticker +=1
-    #print(settings.max_temp)
-   # print(hardware.adc_0_channel_0.voltage)
-    analoog_0.volt2_temp(settings.max_temp,settings.min_temp,settings.max_volt,settings.min_volt,hardware.adc_0_channel_0.voltage)
-    #print(analoog_0.temp)
-    analoog_1.volt2_temp(settings.max_temp,settings.min_temp,settings.max_volt,settings.min_volt,hardware.adc_0_channel_1.voltage)
-    #print(analoog_1.temp)
-    analoog_2.volt2_temp(settings.max_temp,settings.min_temp,settings.max_volt,settings.min_volt,hardware.adc_0_channel_2.voltage)
-    #print(analoog_2.temp)
-    analoog_3.volt2_temp(settings.max_temp,settings.min_temp,settings.max_volt,settings.min_volt,hardware.adc_0_channel_3.voltage)
-    #print(analoog_3.temp)
+    analoog_0.volt2_temp(settings.max_temp, settings.min_temp, settings.max_volt, settings.min_volt, hardware.adc_0_channel_0.voltage)
+    analoog_1.volt2_temp(settings.max_temp, settings.min_temp, settings.max_volt, settings.min_volt, hardware.adc_0_channel_1.voltage)
+    analoog_3.volt2_temp(settings.max_temp, settings.min_temp, settings.max_volt, settings.min_volt, hardware.adc_0_channel_2.voltage)
+    analoog_2.volt2_temp(settings.max_temp, settings.min_temp, settings.max_volt, settings.min_volt, hardware.adc_0_channel_3.voltage)
     
-    client.publish(topic_prefix + "analoge_ingangen/analoog_0", analoog_0.temp)
-    client.publish(topic_prefix + "analoge_ingangen/analoog_1", analoog_1.temp)
-    client.publish(topic_prefix + "analoge_ingangen/analoog_2", analoog_2.temp)
-    client.publish(topic_prefix + "analoge_ingangen/analoog_3", analoog_3.temp)
-#     client.publish(topic_prefix + "analoge_ingangen/analoog_1", ticker)
-#     client.publish(topic_prefix + "analoge_ingangen/analoog_2", ticker)
-#     client.publish(topic_prefix + "analoge_ingangen/analoog_3", ticker)
-#     print(ticker)
-    #print("Published message:", message)
-    time.sleep(0.05)
+
+    # Controleren en publiceren van nieuwe waarden van max_temp
+    if old_analoog_0 != analoog_0.temp:
+        client.publish(topic_prefix + "analoge_ingangen", str([analoog_0.temp * 10 ,analoog_1.temp * 10 ,analoog_2.temp * 10 ,analoog_3.temp * 10]))
+        old_analoog_0 = analoog_0.temp
+        
+    if old_analoog_1 != analoog_1.temp:
+        client.publish(topic_prefix + "analoge_ingangen", str([analoog_0.temp * 10 ,analoog_1.temp * 10 ,analoog_2.temp * 10 ,analoog_3.temp * 10]))
+        old_analoog_1 = analoog_1.temp
+        
+    if old_analoog_2 != analoog_2.temp:
+        client.publish(topic_prefix + "analoge_ingangen", str([analoog_0.temp * 10 ,analoog_1.temp * 10 ,analoog_2.temp * 10 ,analoog_3.temp * 10]))
+        old_analoog_2 = analoog_2.temp
+        
+    if old_analoog_3 != analoog_3.temp:
+        client.publish(topic_prefix + "analoge_ingangen", str([analoog_0.temp * 10 ,analoog_1.temp * 10 ,analoog_2.temp * 10 ,analoog_3.temp * 10]))
+        old_analoog_3 = analoog_3.temp
+
+    # Controleren en publiceren van nieuwe waarden van schakelaar_0
+    if old_schakelaar_0_state != hardware.schakelaar_0.is_pressed:
+        client.publish(topic_prefix + "schakelaars", str([int(hardware.schakelaar_0.is_pressed), int(hardware.schakelaar_1.is_pressed), int(hardware.schakelaar_2.is_pressed), int(hardware.schakelaar_3.is_pressed)]))
+        old_schakelaar_0_state = hardware.schakelaar_0.is_pressed
+
+    # Controleren en publiceren van nieuwe waarden van schakelaar_1
+    if old_schakelaar_1_state != hardware.schakelaar_1.is_pressed:
+        client.publish(topic_prefix + "schakelaars", str([int(hardware.schakelaar_0.is_pressed), int(hardware.schakelaar_1.is_pressed), int(hardware.schakelaar_2.is_pressed), int(hardware.schakelaar_3.is_pressed)]))
+        old_schakelaar_1_state = hardware.schakelaar_1.is_pressed
+
+    # Controleren en publiceren van nieuwe waarden van schakelaar_2
+    if old_schakelaar_2_state != hardware.schakelaar_2.is_pressed:
+        client.publish(topic_prefix + "schakelaars", str([int(hardware.schakelaar_0.is_pressed), int(hardware.schakelaar_1.is_pressed), int(hardware.schakelaar_2.is_pressed), int(hardware.schakelaar_3.is_pressed)]))
+        old_schakelaar_2_state = hardware.schakelaar_2.is_pressed
+
+    # Controleren en publiceren van nieuwe waarden van schakelaar_3
+    if old_schakelaar_3_state != hardware.schakelaar_3.is_pressed:
+        client.publish(topic_prefix + "schakelaars", str([int(hardware.schakelaar_0.is_pressed), int(hardware.schakelaar_1.is_pressed), int(hardware.schakelaar_2.is_pressed), int(hardware.schakelaar_3.is_pressed)]))
+        old_schakelaar_3_state = hardware.schakelaar_3.is_pressed
+    
+    time.sleep(0.2)
+
+    
+    
     
 
 

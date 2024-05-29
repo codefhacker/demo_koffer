@@ -19,17 +19,17 @@ Versie 1
 
 
 import json
-from time import sleep
+from time import sleep 
 
 class Config:
     def __init__(self):
         self.servo_pin = None
-        self.led_hoge_storing = None
+        self.led_hoge_storing = None 
         self.led_lage_storing = None
         self.led_in_bedrijf = None
         self.fan_pin = None
         self.led_strip_pin = None
-        self.potmeter_temperatuur = None
+        self.potmeter_temperatuur = None  
         self.potmeter_setpoint = None
         self.tijd_vertraging_servo = None
         self.Kr_factor_verwarmen = None
@@ -43,7 +43,7 @@ class Config:
         self.num_leds = None
         self.schakelaar_0 = None
         self.schakelaar_1 = None
-        self.schakelaar_2 = None
+        self.schakelaar_2 = None 
         self.schakelaar_3 = None
         self.schakelaar_4 = None
         self.schakelaar_5 = None
@@ -60,8 +60,11 @@ class Config:
         self.licht_sterkte_neopixel = None
         self.mqtt_topic_modbus = None
         self.mqtt_topic_normaal = None
+        self.knippertijd_storings_leds = None
+        self.modbus_pin = None
+        self.test_pin = None
 
-    def load_from_file(self, filename='config.json'):
+    def load_from_file(self, filename='/home/demo_koffer/lbk_code/config.json'):
         try:
             with open(filename, 'r') as f:
                 data = json.load(f)
@@ -73,6 +76,8 @@ class Config:
                 
                 self.fan_pin = data['demo_koffer']['hardware']['digitale_pinnen']['fan_pin']
                 self.led_strip_pin = data['demo_koffer']['hardware']['digitale_pinnen']['led_strip_pin']
+                self.modbus_pin = data['demo_koffer']['hardware']['digitale_pinnen']['modbus_pin']
+                self.test_pin = data['demo_koffer']['hardware']['digitale_pinnen']['test_pin']
                 self.potmeter_temperatuur = data['demo_koffer']['hardware']['analoge_pinnen']['potmeter_temperatuur']
                 self.potmeter_setpoint = data['demo_koffer']['hardware']['analoge_pinnen']['potmeter_setpoint']
                 self.tijd_vertraging_servo = data['demo_koffer']['overige_instellingen']['tijd_vertraging_servo']
@@ -104,6 +109,7 @@ class Config:
                 self.schakelaar_2 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['2']
                 self.schakelaar_3 = data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars']['3']
                 self.licht_sterkte_neopixel = data['demo_koffer']['overige_instellingen']['licht_sterkte_neopixel']
+                self.knippertijd_storings_leds = data['demo_koffer']['overige_instellingen']['knippertijd_storings_leds']
 
                 self.schakelaars = tuple(data['demo_koffer']['hardware']['digitale_pinnen']['schakelaars'][str(i)] for i in range(4))   # zet voor i in range 10 mochten er in de toekomst 10 schakelaars zijn.
 
@@ -140,6 +146,7 @@ class Config:
             self.schakelaar_2 = 5
             self.schakelaar_3 = 6
             self.licht_sterkte_neopixel = 1
+            self.knippertijd_storings_leds = 1
 #             self.schakelaar_4 = 21
 #             self.schakelaar_5 = 20
 #             self.schakelaar_6 = None
@@ -154,6 +161,9 @@ class Config:
             
             self.max_procent_regelaar = 100
             self.min_procent_regelaar = 0
+            self.modbus_pin = 20
+            self.test_pin = 21
+            
             
             self.save_to_file()
             print("Bestand hersteld")
@@ -169,17 +179,13 @@ class Config:
                         'led_in_bedrijf' : self.led_in_bedrijf,
                         'fan_pin' : self.fan_pin,
                         'led_strip_pin': self.led_strip_pin,
+                        'modbus_pin': self.modbus_pin,
+                        'test_pin': self.test_pin,
                         'schakelaars': {
                             '0' : self.schakelaar_0,
                             '1' : self.schakelaar_1,
                             '2' : self.schakelaar_2,
-                            '3' : self.schakelaar_3,
-                            '4' : self.schakelaar_4,
-                            '5' : self.schakelaar_5,
-                            '6' : self.schakelaar_6,
-                            '7' : self.schakelaar_7,
-                            '8' : self.schakelaar_8,
-                            '9' : self.schakelaar_9
+                            '3' : self.schakelaar_3
                         }
                     },
                     'analoge_pinnen': {
@@ -205,7 +211,8 @@ class Config:
                     'mqtt_topic_modbus' : self.mqtt_topic_modbus,
                     'max_procent_regelaar' : self.max_procent_regelaar,
                     'min_procent_regelaar' : self.min_procent_regelaar,
-                    'licht_sterkte_neopixel' : self.licht_sterkte_neopixel
+                    'licht_sterkte_neopixel' : self.licht_sterkte_neopixel,
+                    'knippertijd_storings_leds' : self.knippertijd_storings_leds
                 }
             }
         }

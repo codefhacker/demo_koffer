@@ -8,6 +8,8 @@
                 "led_in_bedrijf": 17,
                 "fan_pin": 23,
                 "led_strip_pin": 18,
+                "modbus_pin": 20,
+                "test_pin": 21, 
                 "schakelaars": {
                     "0": 24,
                     "1": 25,
@@ -17,13 +19,13 @@
                 }
             },
             "analoge_pinnen": {
-                "potmeter_temperatuur": null,
+                "potmeter_temperatuur": null, 
                 "potmeter_setpoint": null
             }
         },
         "overige_instellingen": {
             "tijd_vertraging_servo": 10,
-            "Kr_factor_verwarmen": 20,
+            "Kr_factor_verwarmen": 5,
             "Kr_factor_koelen": 10,
             "maximale_voltage": 3.3,
             "minimale_voltage": 0,
@@ -37,9 +39,10 @@
             "mqtt_internet_poort": 1883,
             "mqtt_topic_normaal": "demo_koffer/",
             "mqtt_topic_modbus": "demo_koffer/modbus/",
-            "max_procent_regelaar": 100,
+            "max_procent_regelaar": 100, 
             "min_procent_regelaar": 0,
-            "licht_sterkte_neopixel" : 1 
+            "licht_sterkte_neopixel" : 1, 
+            "knippertijd_storings_leds" : 0.5
         }
     }
 }

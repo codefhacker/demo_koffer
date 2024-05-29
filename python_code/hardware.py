@@ -37,7 +37,16 @@ class Hardware:
         
         self.servo = None
         self.servo_status = None
+        self.led_strip_status = None
+        self.led_strip_data = None
+        self.ticker_servo = None
+        self.ticker_led = None
+        self.klep_stand = None
         
+        self.storing_klep = None
+        self.storing_fan = None
+        self.status_schakelaar_0 = None
+        self.status_schakelaar_1 = None
     def setup_adc_0(self,i2c_address):
         adc_0 = ADS.ADS1015(self.i2c, address=i2c_address)
         self.adc_0_channel_0 = AnalogIn(adc_0, ADS.P0)
@@ -48,9 +57,9 @@ class Hardware:
     def setup_adc_1(self,i2c_address):
         adc_1 = ADS.ADS1015(self.i2c, address=i2c_address)
         self.adc_1_channel_0 = AnalogIn(adc_1, ADS.P0)
-        self.adc_2_channel_1 = AnalogIn(adc_2, ADS.P1)
-        self.adc_3_channel_2 = AnalogIn(adc_3, ADS.P2)
-        self.adc_4_channel_3 = AnalogIn(adc_4, ADS.P3)
+        self.adc_1_channel_1 = AnalogIn(adc_1, ADS.P1) 
+        self.adc_1_channel_2 = AnalogIn(adc_1, ADS.P2)
+        self.adc_1_channel_3 = AnalogIn(adc_1, ADS.P3)
         
     def setup_neopixel(self,num_leds,lichtsterkte):
         self.led_strip = neopixel.NeoPixel(board.D18, num_leds, brightness=int(lichtsterkte))
@@ -94,7 +103,9 @@ class Hardware:
         self.schakelaar_2 = Button(schakelaars[2], pull_up=False)
         self.schakelaar_3 = Button(schakelaars[3], pull_up=False)
         
-      
+    def setup_status_schakelaar(self,pin_0,pin_1):
+        self.status_schakelaar_0 = Button(pin_0, pull_up=False)
+        self.status_schakelaar_1 = Button(pin_1, pull_up=False)
     
     def setup_servo(self,servo_pin):
         factory = PiGPIOFactory()
@@ -124,7 +135,6 @@ class Hardware:
                 #blue = int(vraag) + 155
                 #red = 100 - int(vraag)
                 green = 255 - int(vraag) * 255 // 100
-                print("groen: " , green)
                 self.led_strip.fill((0, green, 255))
                 
         else:
